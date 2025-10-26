@@ -2,21 +2,21 @@ import { z } from "zod";
 
 const userValidationSchema = z.object({
   body: z.object({
-    name: z.string().optional(),
+    name: z.string(),
     email: z.string().email(),
     password: z.string(),
-    referralWord: z.string().optional(),
+    referredBy: z.string().optional(),
   }),
 });
 
-const loginValidationSchema = z.object({
+const userLoginValidationSchema = z.object({
   body: z.object({
-    email: z.string(),
+    email: z.string().email(),
     password: z.string(),
   }),
 });
 
-export const AuthValidation = {
+export const UserValidations = {
   userValidationSchema,
-  loginValidationSchema,
+  userLoginValidationSchema,
 };

@@ -2,12 +2,17 @@ import mongoose from "mongoose";
 import app from "./app";
 import config from "./app/config";
 import { Server } from "http";
+import { seedBooks } from "./app/modules/book/book.seed";
 let server: Server;
 
 async function main() {
   try {
     // console.log("before");
     await mongoose.connect(config.database_url as string);
+
+    if (config.node_env === 'development') {
+      await seedBooks();
+    }
     // console.log("after");
     console.log(config.database_url);
     server = app.listen(config.port, () => {
