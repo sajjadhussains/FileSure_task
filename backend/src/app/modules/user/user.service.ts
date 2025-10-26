@@ -63,8 +63,13 @@ const loginUser = async (payload: TLoginUser) => {
 
   );
 
+  const userObject = user.toObject();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { password, ...userWithoutPassword } = userObject;
+
   return {
     accessToken,
+    user: userWithoutPassword,
   };
 };
 
@@ -75,7 +80,7 @@ const getMyReferralStatsFromDB = async (user: TUser) => {
   const convertedUsers = referrals.filter(
     (r) => r.status === 'converted',
   ).length;
-  const totalCreditsEarned = convertedUsers * 2;
+  const totalCreditsEarned = user.credits || 0;
 
   return {
     referredUsers,

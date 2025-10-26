@@ -1,4 +1,6 @@
-import { Model } from 'mongoose';
+import { Document, Model } from 'mongoose';
+
+export type TUserDoc = TUser & Document;
 
 export type TUser = {
   name: string;
@@ -10,6 +12,6 @@ export type TUser = {
   isPurchased?: boolean;
 };
 
-export interface UserModel extends Model<TUser> {
-  isUserExistsByEmail(email: string): Promise<TUser | null>;
+export interface UserModel extends Model<TUserDoc> {
+  isUserExistsByEmail(email: string): Promise<TUserDoc | null>;
 }

@@ -1,9 +1,9 @@
 import { Schema, model } from 'mongoose';
 import bcrypt from 'bcrypt';
-import { TUser, UserModel } from './user.interface';
+import { TUser, TUserDoc, UserModel } from './user.interface';
 import config from '../../config';
 
-const userSchema = new Schema<TUser, UserModel>(
+const userSchema = new Schema<TUserDoc, UserModel>(
   {
     name: {
       type: String,
@@ -56,7 +56,8 @@ userSchema.pre('save', async function (next) {
 
 // post save middleware / hook
 userSchema.post('save', function (doc, next) {
-  doc.password = '';
+  // this hook is for removing password from the response, not for mutating the doc
+  // doc.password = '';
   next();
 });
 
@@ -64,4 +65,4 @@ userSchema.statics.isUserExistsByEmail = async function (email: string) {
   return await User.findOne({ email }).select('+password');
 };
 
-export const User = model<TUser, UserModel>('User', userSchema);
+export const User = model<TUserDoc, UserModel>('User', userSchema);

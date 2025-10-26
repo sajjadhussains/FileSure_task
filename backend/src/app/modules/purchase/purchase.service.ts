@@ -22,7 +22,9 @@ const createPurchaseIntoDB = async (
     throw new AppError(httpStatus.BAD_REQUEST, 'Book is out of stock!');
   }
 
-  const currentUser = await User.findOne({ email: user.email });
+  const currentUser = await User.findOne({ email: user.email }).select(
+    '+password',
+  );
   if (!currentUser) {
     throw new AppError(httpStatus.NOT_FOUND, 'User not found!');
   }
@@ -49,7 +51,7 @@ const createPurchaseIntoDB = async (
     if (referral) {
       const referrerUser = await User.findOne({
         referralCode: referral.referrer,
-      });
+      }).select('+password');
 
       if (referrerUser) {
         referrerUser.credits += 2;
@@ -58,14 +60,13 @@ const createPurchaseIntoDB = async (
 
         referral.status = 'converted';
         await referral.save();
+
+        // Mark the user as having made a purchase and save
+        currentUser.isPurchased = true;
+        await currentUser.save();
       }
     }
-
-    // Mark the user as having made a purchase
-    currentUser.isPurchased = true;
   }
-
-  await currentUser.save();
 
   return null;
 };
