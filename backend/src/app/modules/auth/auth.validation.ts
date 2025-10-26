@@ -1,18 +1,17 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 const userValidationSchema = z.object({
   body: z.object({
-    id: z.string(),
-    name: z.string(),
+    name: z.string().optional(),
     email: z.string().email(),
     password: z.string(),
-    role: z.enum(['user', 'admin']),
+    referralWord: z.string().optional(),
   }),
 });
 
 const loginValidationSchema = z.object({
   body: z.object({
-    id: z.string(),
+    email: z.string(),
     password: z.string(),
   }),
 });

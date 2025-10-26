@@ -12,36 +12,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const mongoose_1 = __importDefault(require("mongoose"));
-const app_1 = __importDefault(require("./app"));
-const config_1 = __importDefault(require("./app/config"));
-let server;
-function main() {
+exports.User = void 0;
+const mongoose_1 = require("mongoose");
+const bcrypt_1 = __importDefault(require("bcrypt"));
+const userSchema = new mongoose_1.Schema({
+    name: { type: String },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true, select: 0 },
+    referralWord: { type: mongoose_1.Types.ObjectId, ref: "ReferralWord" },
+}, { timestamps: true });
+userSchema.pre("save", function (next) {
     return __awaiter(this, void 0, void 0, function* () {
-        try {
-            // console.log("before");
-            yield mongoose_1.default.connect(config_1.default.database_url);
-            // console.log("after");
-            console.log(config_1.default.database_url);
-            server = app_1.default.listen(config_1.default.port, () => {
-                console.log(` app listening on port ${config_1.default.port}`);
-            });
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const user = this;
+        if (user.isModified("password")) {
+            user.password = yield bcrypt_1.default.hash(user.password, Number(12));
         }
-        catch (err) {
-            console.log(err);
-        }
+        next();
     });
-}
-main();
-process.on("unhandledRejection", () => {
-    console.log("unhandled rejection is detected,shutting down....");
-    if (server) {
-        server.close(() => {
-            process.exit(1);
-        });
-    }
 });
-process.on("uncaughtException", () => {
-    console.log("uncaught exception detected");
-    process.exit(1);
-});
+exports.User = (0, mongoose_1.model)("User", userSchema);

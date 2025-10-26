@@ -1,7 +1,8 @@
+import { Types } from "mongoose";
+
 export interface TUser {
-  id: string;
-  name: string;
+  name?: string;
   email: string;
   password?: string;
-  role: 'user' | 'admin';
+  referralWord?: Types.ObjectId;
 }
